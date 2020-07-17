@@ -1,0 +1,121 @@
+Descrição do projeto e desenvolvimento do processo que você utilizou para resolver o problema;
+
+Como você definiu as etapas e atividades e como se organizou para desenvolver o projeto;
+
+Tecnologias utilizadas e eficácia;
+
+Aprendizados destacados durante o processo e ao final do projeto;
+
+Duas principais dificuldades, e como foram contornadas;
+
+Dois principais acertos ou escolhas acertadas que fizeram diferença no projeto e por quê;
+
+Demonstração prática da aplicação.
+
+Esse projeto implementa um backend - API de uma Central de Erros para centralizar todos os registros de erros em um local, de onde podem monitorar e tomar decisões mais acertadas.
+
+E deve conter:
+- endpoints para serem usados pelo frontend da aplicação
+- um endpoint que será usado para gravar os logs de erro em um banco de dados relacional
+- uma API deve ser segura, permitindo acesso apenas com um token de autenticação válido
+
+Cadastro
+Temos o cadastro de usuário que dá a informação de e-mail e senha, nisto deve ocorrer a criação de token de autenticação
+
+Login
+O usuário vai enviar um email e senha para validar.
+
+Tela principal
+Após logar o usuário recebe o token que identifica e valida tudo que ele vai fazer.
+
+Erros são divididos em 3 categorias: Produção (default), Homologação e Dev
+
+Ordenar por nível e frequência.
+Default - Frequência
+nível - verificar o oq tem maior prioridade com o mesmo nível. Momento do último evento? Quantidade de Eventos?
+frequência - straight foward. Mesma frequência o que desempataria? Level? Tempo da ultima ocorrência?
+
+Ordenção terá que ser feita no bd ou só envia os dados e o Front resolve?
+
+Pesquisa - Post
+Por padrão tras tudo.
+- Level
+- Descrição
+- Origem
+
+Botão: Arquivar - Some da tela principal e aparece apenas em pesquisas? 
+
+Botão: Apagar: Tira do BD.
+
+Tela do Erro
+Cada erro tem:
+- Título: String
+- Detalhes: Text
+- Level: error,warning,debug
+- Eventos: Frequencia - Inteiro
+- Coletado por: Token do usuário;
+
+Usuário:
+    - id integer pk
+    - name varchar(50)
+    - email varchar(254)
+    - password varchar(254)
+    - token
+
+Erro:
+    - id integer pk
+    - title
+    - details
+    - frequency
+    - date 
+    - level
+    - shelved
+    - user_id
+    - group_id
+
+python manage.py runserver -> inicializar o server
+
+python3 manage.py makemigrations 
+
+python3 manage.py migrate
+
+python3 manage.py createsuperuser
+
+Criar Usuário com uma classe customizável
+
+    from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
+Todo Login ele gera ou pega o token criado para o usuário, tive que criar o próprio
+
+
+
+------------------- Minha estratégia --------------------------------------
+
+1º Entender o projeto
+
+2º Verificar o que tinhamos que guardar no Banco de dados.
+
+3º Criar as requests e responses.
+
+Grupos
+	Buscar:
+		Todos os Grupos - OK
+		Eventos de um grupo - OK
+	Adicionar - OK
+
+Usuário
+	Adicionar - OK
+    Logar - OK
+
+Eventos
+	Adicionar - OK
+	Deletar - OK
+	Arquivar - OK
+	Buscar:
+        Todo mundo - OK
+		Level - Ok
+		Descrição/Title - OK
+		Origin - OK
+	Ordenar:
+		Level - OK
+		Frequency - Ok
