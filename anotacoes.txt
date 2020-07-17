@@ -87,7 +87,7 @@ Criar Usuário com uma classe customizável
 
 Todo Login ele gera ou pega o token criado para o usuário, tive que criar o próprio
 
-
+heroku config:set DISABLE_COLLECTSTATIC=1 -> sem arquivos estaticos pois estamos usando uma api
 
 ------------------- Minha estratégia --------------------------------------
 
