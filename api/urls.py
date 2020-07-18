@@ -12,14 +12,20 @@ router.register(r'events', views.EventApiViewSet)
 
 
 urlpatterns = [
+    # Rotas padrões
     path('', include(router.urls)),
     # Users routes
-    path('login/', views.CustomAuthToken.as_view()),
-    path('signup/', views.signup_user),
+    # User login to receive the token
+    path('login', views.CustomAuthToken.as_view()),
+    # User creation
+    path('signup', views.signup_user),
     # Group routes
+    # List all events for a specific group
     path('groups/<int:group_id>/events/', views.list_group_events),
-    path('delete/events/', views.delete_events),
-    path('shelve/events/', views.shelve_events),
+    # Delete events
+    path('delete/events', views.delete_events),
+    # Shelve events
+    path('shelve/events', views.shelve_events),
     
 
 ]

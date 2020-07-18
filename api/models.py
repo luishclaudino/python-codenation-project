@@ -1,12 +1,7 @@
 from django.db import models
-from django.core.validators import validate_email, validate_ipv4_address
-from django.core.validators import MinLengthValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-# Validador da senha para que tenha no mínimo 8 caracteres.
-validate_password = MinLengthValidator(
-    8, "Deve possuir pelo menos 8 caracteres!")
 
 # Create your models here.
 
@@ -15,6 +10,9 @@ class Group(models.Model):
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password):
+        """
+        Cria um usuário, dado um email e uma senha.
+        """
         if not email:
             raise ValueError("Usuários devem ter um email.")
         if not password:
@@ -30,6 +28,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password):
+        """
+        Cria um super usuário, dado um email e uma senha. É utilizada apenas pelo admin.
+        """
         user = self.create_user(
             email = self.normalize_email(email),
             password=password,

@@ -87,7 +87,7 @@ Criar Usuário com uma classe customizável
 
 Todo Login ele gera ou pega o token criado para o usuário, tive que criar o próprio
 
-heroku config:set DISABLE_COLLECTSTATIC=1 -> sem arquivos estaticos pois estamos usando uma api
+ALLOWED_HOSTS = ['*'] => para liberar o heroku
 
 ------------------- Minha estratégia --------------------------------------
 
@@ -119,3 +119,11 @@ Eventos
 	Ordenar:
 		Level - OK
 		Frequency - Ok
+
+4º Enviar requisições via insomnia
+
+5º Fazer Testes
+
+6º Deploy no heroku
+
+7º Configurar o Travis CI
