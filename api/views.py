@@ -201,7 +201,7 @@ class EventApiViewSet(viewsets.ViewSet):
                     group_id = Group.objects.get(id=request.data['group_id'])
                 )
             except:
-                return Response({'error': 'Invalid request data.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Invalid format in request data.'}, status=status.HTTP_400_BAD_REQUEST)
             response_status = status.HTTP_201_CREATED
         response = EventModelSerializer(event)
         return Response(data=response.data, status=response_status)
@@ -218,7 +218,10 @@ class EventApiViewSet(viewsets.ViewSet):
         HttpResponse: Retorna os dados do evento e o token do usuário que o criou.
 
         """
-        event = self.queryset.get(id=pk)
+        try:
+            event = self.queryset.get(id=pk)
+        except :
+            return Response({'error': "User doesn't exist."}, status=status.HTTP_400_BAD_REQUEST)
         response = dict(EventModelSerializer(event).data)
         response['user_token'] = str(Token.objects.get(user=event.user_id))
         return Response(data=response, status=status.HTTP_200_OK)
@@ -241,16 +244,16 @@ def delete_events(request):
     try:
         events_to_delete =[Event.objects.get(id=event) for event in request.data['events']]
     except:
-        return Response({'error': f'Event given does not exists.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': f'One or more events given don\'t exist.'}, status=status.HTTP_404_NOT_FOUND)
     for event in events_to_delete:
         event.delete()
 
-    return Response({'status': f'Events deleted.'}, status=status.HTTP_201_CREATED)
+    return Response({'status': f'Events deleted.'}, status=status.HTTP_202_ACCEPTED)
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def shelve_events(request) -> Response:
+def shelve_events(request):
     """
     Função utilizada para arquivar eventos
 
@@ -264,9 +267,9 @@ def shelve_events(request) -> Response:
     try:
         events_to_shelve =[Event.objects.get(id=event) for event in request.data['events']]
     except:
-        return Response({'error': f'Event given does not exists.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': f'One or more events given don\'t exist.'}, status=status.HTTP_404_NOT_FOUND)
     for event in events_to_shelve:
         event.shelved = True
         event.save()
 
-    return Response({'status': f'Events shelved.'}, status=status.HTTP_201_CREATED)
+    return Response({'status': f'Events shelved.'}, status=status.HTTP_202_ACCEPTED)
