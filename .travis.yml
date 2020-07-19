@@ -4,9 +4,20 @@ python:
 
 stages:
   - name: test
+  - name: deploy
 
 jobs:
   include:
     - stage: test
       name: Unit Tests
       script: python manage.py test
+    - stage: deploy
+      name: Heroku Deploy
+      script: /bin/true
+      deploy:
+        provider: heroku
+        api_key:
+          secure: OcA3B7+oxCnckE3N2PnodW4ckTCbFNj96HdidWJ6rHYDvSe5pVHmIOyMFW/fECG4fbbaEt9HOxeH0q1Tqshkr7/e4X1E4Qbzy+Sc3E/94MWuilSeOPxlgq6bkTF28SumWyZBgQxtESVuAS4MB+Zl4lPt1h4XsBeqijN56nlzXBPpR5sWHf+MLIsu03yugu7WAhDiHmIhvEVaqog2KB9qjkjdMuAhOce8j8sTbpJv/zJWcECXx2GjmeZj2reSYbFs0yvDBaC9H2ZSL4q4k/8H4plNHNoUlx0P5UP5ZRmKXIAWgG8w+qQOGLjWKhu/ls0JfMyeZ3Qt4ocanTvygNAJguPUTNGOhxozJa87Jt/G9W0i8cIQMzQZCDu9aupwWbC1rP6vSkCZbYaIB6l5KfQKc/Kc5LZT2vP1PpyCl85ljtX9fz88GIRa4RJiUZ1cnnVeuuvqIVcpSwPKCrFhg3sAIjpRZlN/38BjEMUSHsjB/g+bIM/TMj6Uc66Ee7yqyQqO6wpeYiQGQRzJauLyE8LHyYYBB9UTlUxuOBDStbrENdhlh+Ypuf71zliM4nmf+XRwJM4+qAsgrlYr++zJJQrqcJPSUaI8OGPliGgnz9d6ZX+h1I03IeC9i71WdK+htiSIg7gO3svBpIRPyUzKiT78nG3ad5Hz8hRz5rRiW4XALqY=
+        app: lhcs-final-project
+        on: master
+        run: "python manage.py migrate"
