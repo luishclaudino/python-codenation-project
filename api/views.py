@@ -28,6 +28,8 @@ def signup_user(request):
    """
     email = request.data['email']
     password = request.data['password']
+    if User.objects.filter(email=email):
+        return Response({'status': f'User already exists.'}, status=status.HTTP_403_FORBIDDEN)
     user = User.objects.create_user(email,password)
 
     return Response({'status': f'User {user.email} created.'}, status=status.HTTP_201_CREATED)
