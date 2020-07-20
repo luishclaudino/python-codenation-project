@@ -24,7 +24,7 @@ https://www.youtube.com/watch?v=WfGNlvtVrZg
 
 ## :thumbsup: Agradecimentos
 
-Quero agradecer à Codenation por promover o AceleraDev Python e disponibilizar conhecimento.
+Quero agradecer à Codenation por promover o AceleraDev Python e disponibilizar conhecimento para a comunidade de programadores.
 
 ---
 
