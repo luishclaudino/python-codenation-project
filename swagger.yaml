@@ -1,0 +1,444 @@
+swagger: "2.0"
+info:
+  description: "Projeto prático realizado para conclusão do AceleraDev Python da Stone, onde o objetivo é criar endpoints e guardar os registros de erros de aplicações por meio de uma API feita em Django.\n **Por conta da limitação do Swagger coloque a palavra Token antes do seu token de acesso.\n Ex: Token 858a1e749009c92eebe5a19e5118f4e8a81d53c6**"
+  version: "1.0.0"
+  title: "Error Center Codenation"
+  contact:
+    email: "lhcs10@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "lhcs-final-project.herokuapp.com"
+basePath: "/api"
+tags:
+- name: "User"
+  description: "Todas as requisições para Usuários"
+- name: "Groups"
+  description: "Todas as requisições para Grupos da origem de Eventos"
+- name: "Events"
+  description: "Todas as requisições para Eventos"
+
+schemes:
+- "https"
+- "http"
+securityDefinitions:
+  Authorization:
+    description: "Adicione a palavra Token antes do seu token de acesso separado com um espaço.\n Por exemplo: Token 858a1e749009c92eebe5a19e5118f4e8a81d53c6"
+    type: apiKey
+    in: header
+    name: authorization
+paths:
+  /signup:
+    post:
+      tags:
+        - "User"
+      summary: "Cria um novo usuário"
+      operationId: "addUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Email e senha do usuário que vai ser cadastrado"
+        required: true
+        schema:
+          $ref: "#/definitions/UserPost"
+      responses:
+        "201":
+          description: "Dados JSON"
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: User jose.antunes@gmail.com created.
+
+        "403":
+          description: "Dados JSON"
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: User already exists.
+  /login:
+    post:
+      tags:
+        - "User"
+      summary: "Faz o login do usuário"
+      operationId: "loginUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Email e senha do usuário que vai realizar o login para receber o token de autenticação"
+        required: true
+        schema:
+          $ref: "#/definitions/UserPost"
+      responses:
+        "202":
+          description: Dado JSON.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "858a1e749009c92eebe5a19e5118f4e8a81d53c6"
+
+        "403":
+          description: Dado JSON.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Wrong email or password.
+  /groups/:
+    get:
+      tags:
+        - "Groups"
+      summary: "Lista todos os grupos de eventos"
+      operationId: "listGroups"
+      produces:
+      - "application/json"
+      responses:
+        "202":
+          description: "Array com dados no formato JSON."
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Produção"
+      security:
+        - Authorization: []
+  /groups/{group_id}/events/:
+    get:
+      tags:
+        - "Groups"
+      summary: "Lista todos os eventos de um grupo específico"
+      description: "Esta requisição faz a listagem de todos os eventos de um grupo específico. Ele possui 4 query parameters, order-by, level, origin e title. Dos três últimos parâmetros (level, origin e title) apenas um pode ser utilizado por vez, se utilizar mais de um apenas o primeiro na ordem em que foi escrito na URL será utilizado e o restante ignorado."
+      operationId: "listEventsofGroups"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "group_id"
+        in: "path"
+        description: "Id do grupo escolhido. Ex: 1"
+        required: true
+        type: integer
+      - in: "query"
+        description: "Faz a ordenação utilizando o campo de \"level\" ou \"frequency\". "
+        name: "order-by"
+        required: false
+        type: "string"
+      - in: "query"
+        description: "Realiza a busca de eventos por meio do campo \"level\" (error, debug, warning). "
+        name: "level"
+        required: false
+        type: "string"
+      - in: "query"
+        description: "Realiza a busca de eventos por meio do campo \"origin\". Aqui deve ser passado uma string com o estilo de uma url. "
+        name: "origin"
+        required: false
+        type: string
+      - in: "query"
+        description: "Realiza a busca de eventos por meio do campo \"title\". "
+        name: "title"
+        required: false
+        type: string
+      responses:
+        "200":
+          description: "Array com dados no formato JSON."
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                level:
+                  type: string
+                  example: "warning"
+                title:
+                  type: string
+                  example: "Warning Title"
+                details:
+                  type: string
+                  example: "Details of the warning."
+                origin:
+                  type: string
+                  example: "135.16.0.23"
+                frequency:
+                  type: integer
+                  example: 10
+                date:
+                  type: string
+                  example: "2020-07-17T20:30:21.983665Z"
+                shelved:
+                  type: boolean
+                  example: false
+                user_id:
+                  type: integer
+                  example: 1
+                group_id:
+                  type: integer
+                  example: 1
+                
+      security:
+        - Authorization: []
+        
+  /events/:
+    post:
+      tags:
+        - "Events"
+      summary: "Cria um novo evento de erro."
+      operationId: "createEvent"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Para criar um novo evento deve passar os seguintes dados nos dados da requisição: \n level: \"warning\", \"debug\", \"error\" \n title: string \n details: string \n origin: string no estilo de uma URL (10.0.0.3 ou app.server.com) \n user_id: integer \n group_id: integer "
+        required: true
+        schema:
+          $ref: "#/definitions/EventPost"
+      responses:
+        "201":
+          description: "Array com dados no formato JSON."
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                level:
+                  type: string
+                  example: "warning"
+                title:
+                  type: string
+                  example: "Warning Title"
+                details:
+                  type: string
+                  example: "Details of the warning."
+                origin:
+                  type: string
+                  example: "135.16.0.23"
+                frequency:
+                  type: integer
+                  example: 10
+                date:
+                  type: string
+                  example: "2020-07-17T20:30:21.983665Z"
+                shelved:
+                  type: boolean
+                  example: false
+                user_id:
+                  type: integer
+                  example: 1
+                group_id:
+                  type: integer
+                  example: 1
+        "400":
+          description: "Dados no formato JSON informando que os dados da requisição não estão de acordo com o formato padrão."
+          schema:
+            type: "array"
+            items:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Invalid format in request data."
+      security:
+        - Authorization: []
+                  
+  /events/{event-id}/:
+    get:
+      tags:
+        - "Events"
+      summary: "Retorna o evento requisitado pelo id."
+      operationId: "getEventbyID"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "event-id"
+        in: "path"
+        description: "Id do evento. Ex: 1"
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: "Dados do evento no formato JSON."
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              level:
+                type: string
+                example: "warning"
+              title:
+                type: string
+                example: "Warning Title"
+              details:
+                type: string
+                example: "Details of the warning."
+              origin:
+                type: string
+                example: "135.16.0.23"
+              frequency:
+                type: integer
+                example: 10
+              date:
+                type: string
+                example: "2020-07-17T20:30:21.983665Z"
+              shelved:
+                type: boolean
+                example: false
+              user_id:
+                type: integer
+                example: 1
+              group_id:
+                type: integer
+                example: 1
+              user_token:
+                type: string
+                example: "858a1e749009c92eebe5a19e5118f4e8a81d53c6"
+        400:
+          description: "Erro no formato JSON"
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "User doesn't exist."
+          
+      security:
+        - Authorization: []
+  
+  /shelve/events/:
+    post:
+      tags:
+        - "Events"
+      summary: "Arquiva eventos especificados."
+      description: ""
+      operationId: "shelveEvents"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Envia um array de ids no campo events para que sejam arquivados."
+        required: true
+        schema:
+          type: object
+          properties:
+            events:
+              type: array
+              items:
+                type: integer
+                example: 1,25,45
+      responses:
+        "202":
+          description: "Eventos arquivados com sucesso."
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Events shelved."
+        "404":
+          description: "Um ou mais eventos não foram encontrados no banco de dados."
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "One or more events given don't exist."
+      security:
+      - Authorization: []
+      
+  /delete/events/:
+    post:
+      tags:
+        - "Events"
+      summary: "Deleta eventos especificados."
+      description: ""
+      operationId: "deleteEvents"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Envia um array de ids no campo events para que sejam deletados."
+        required: true
+        schema:
+          type: object
+          properties:
+            events:
+              type: array
+              items:
+                type: integer
+                example: 1,2,3,5,45
+              
+      responses:
+        "202":
+          description: "Eventos deletados com sucesso."
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Events deleted."
+        "404":
+          description: "Um ou mais eventos não foram encontrados no banco de dados."
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "One or more events given don't exist."
+      security:
+      - Authorization: []
+
+definitions:
+  UserPost:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "jose.antunes@gmail.com"
+      password:
+        type: "string"
+        example: "S3nh@Ultr@Secret@"
+  EventPost:
+    type: object
+    properties:
+      level:
+        type: string
+        example: "warning"
+      title:
+        type: string
+        example: "Warning Title"
+      details:
+        type: string
+        example: "Details of the warning."
+      origin:
+        type: string
+        example: "135.16.0.23"
+      user_id:
+        type: integer
+        example: 1
+      group_id:
+        type: integer
+        example: 1
