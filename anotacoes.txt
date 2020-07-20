@@ -127,3 +127,5 @@ Eventos
 6º Deploy no heroku
 
 7º Configurar o Travis CI
+
+https://www.youtube.com/watch?v=w8Kipp2NPlQ
