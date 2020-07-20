@@ -347,7 +347,7 @@ paths:
               type: array
               items:
                 type: integer
-                example: 1,25,45
+                example: 1
       responses:
         "202":
           description: "Eventos arquivados com sucesso."
@@ -389,7 +389,7 @@ paths:
               type: array
               items:
                 type: integer
-                example: 1,2,3,5,45
+                example: 5
               
       responses:
         "202":
